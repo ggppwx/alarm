@@ -24,7 +24,7 @@ class Job(object):
 
     def run(self, text, sound):
         playsound(sound)
-        system('say {} clock'.format(text))
+        #system('say {} clock'.format(text))
         #self._engine.say(text)
         #self._engine.runAndWait()
 
