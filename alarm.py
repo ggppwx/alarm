@@ -6,6 +6,8 @@ import time
 import daemon
 import functools
 import pyttsx
+from playsound import playsound
+from os import system
 
 def text_to_speech(text):
 
@@ -15,15 +17,16 @@ def text_to_speech(text):
 
 class Job(object):
     def __init__(self):
+        #self._engine = pyttsx.init()
+        #self._engine.setProperty('rate', 80)
+        #self._engine.setProperty('volume', 5)
         pass
-        self._engine = pyttsx.init()
-        self._engine.setProperty('rate', 80)
-        self._engine.setProperty('volume', 5)
 
-    def run(self, text):
-        print('im doing this shit>>> ', text)
-        self._engine.say(text)
-        self._engine.runAndWait()
+    def run(self, text, sound):
+        playsound(sound)
+        system('say {} clock'.format(text))
+        #self._engine.say(text)
+        #self._engine.runAndWait()
 
 
 def main():
@@ -45,14 +48,14 @@ def main():
     job = Job()
 
     for key, value in config.items('time'):
-        sound = 'default.mp3'
+        sound = 'music.mp3'
         if config.has_option('sound', key):
             sound = config.get('sound', key)
 
         print sound
         print value
         # adding system alarm
-        schedule.every().day.at(value).do(job.run, text=str(sound))
+        schedule.every().day.at(value).do(job.run, text=str(value), sound=str(sound))
 
     while 1:
         schedule.run_pending()
@@ -67,10 +70,8 @@ def test():
 
 
 if __name__ == "__main__":
-    test()
-
-    # with daemon.DaemonContext(
-    #         working_directory='./',
-    #         stdout=sys.stdout,
-    #         stderr=sys.stderr):
-    #     main()
+    with daemon.DaemonContext(
+            working_directory='./',
+            stdout=sys.stdout,
+            stderr=sys.stderr):
+        main()
