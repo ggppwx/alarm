@@ -4,10 +4,26 @@ import ConfigParser
 import schedule
 import time
 import daemon
+import functools
+import pyttsx
 
-def job():
-    print('im doing this shit')
+def text_to_speech(text):
 
+    pass
+
+
+
+class Job(object):
+    def __init__(self):
+        pass
+        self._engine = pyttsx.init()
+        self._engine.setProperty('rate', 80)
+        self._engine.setProperty('volume', 5)
+
+    def run(self, text):
+        print('im doing this shit>>> ', text)
+        self._engine.say(text)
+        self._engine.runAndWait()
 
 
 def main():
@@ -25,19 +41,36 @@ def main():
     with open(args.config) as configFile:
         config.readfp(configFile)
 
+
+    job = Job()
+
     for key, value in config.items('time'):
+        sound = 'default.mp3'
+        if config.has_option('sound', key):
+            sound = config.get('sound', key)
+
+        print sound
         print value
         # adding system alarm
-        schedule.every().day.at(value).do(job)
+        schedule.every().day.at(value).do(job.run, text=str(sound))
 
     while 1:
         schedule.run_pending()
         time.sleep(1) #one sec
 
 
+
+def test():
+    job = Job()
+    job.run(text='11 clock')
+
+
+
 if __name__ == "__main__":
-    with daemon.DaemonContext(
-            working_directory='./',
-            stdout=sys.stdout,
-            stderr=sys.stderr):
-        main()
+    test()
+
+    # with daemon.DaemonContext(
+    #         working_directory='./',
+    #         stdout=sys.stdout,
+    #         stderr=sys.stderr):
+    #     main()
