@@ -7,21 +7,49 @@ import daemon
 import functools
 import os
 import platform
+import datetime
 from playsound import playsound
 
+from lib import Orgnode
 
+class Org(object):
+    def __init__(self, files):
+        self._files = files
+
+
+    def getTasks(self, date):
+        tasks = []
+        for f in self._files:
+            nodelist = Orgnode.makelist(f)
+            for n in nodelist:
+                if n.Todo() != 'DONE' and n.Scheduled() == date:
+                    tasks.append(n.Heading())
+        return tasks
 
 
 class Job(object):
     def __init__(self):
         self._system = platform.system()
+        self._org = Org(['/Users/jingweigu/Dropbox/org/scratch.org'])
 
     def _speak(self, text):
         if self._system == 'Darwin':
-            os.system('say {} clock'.format(text))
+            os.system('say {}'.format(text))
         else:                
-            os.system('espeak -s 150 -a 200 "{} clock"'.format(text))
-    
+            os.system('espeak -s 150 -a 200 "{}"'.format(text))
+
+    def _report_time(self, sound ):
+        playsound(sound)
+
+    def _read_todays_org(self):
+        self._speak('Todays task has: ')
+        today = datetime.date.today() 
+        tasks = self._org.getTasks(today)
+        for task in tasks:
+            self._speak(task)
+            time.sleep(1.5)
+
+
     def run(self, text, sound):
         playsound(sound)
         self._speak(text)
@@ -65,7 +93,10 @@ def test():
     job = Job()
     job._speak('11')
 
-
+def testOrg():
+    job = Job()
+    job._read_todays_org()
 
 if __name__ == "__main__":
-    main()
+    testOrg()
+
