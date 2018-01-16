@@ -5,28 +5,26 @@ import schedule
 import time
 import daemon
 import functools
-import pyttsx
+import os
+import platform
 from playsound import playsound
-from os import system
 
-def text_to_speech(text):
-
-    pass
 
 
 
 class Job(object):
     def __init__(self):
-        #self._engine = pyttsx.init()
-        #self._engine.setProperty('rate', 80)
-        #self._engine.setProperty('volume', 5)
-        pass
+        self._system = platform.system()
 
+    def _speak(self, text):
+        if self._system == 'Darwin':
+            os.system('say {} clock'.format(text))
+        else:                
+            os.system('espeak -s 150 -a 200 "{} clock"'.format(text))
+    
     def run(self, text, sound):
         playsound(sound)
-        #system('say {} clock'.format(text))
-        #self._engine.say(text)
-        #self._engine.runAndWait()
+        self._speak(text)
 
 
 def main():
@@ -65,13 +63,9 @@ def main():
 
 def test():
     job = Job()
-    job.run(text='11 clock')
+    job._speak('11')
 
 
 
 if __name__ == "__main__":
-    with daemon.DaemonContext(
-            working_directory='./',
-            stdout=sys.stdout,
-            stderr=sys.stderr):
-        main()
+    main()
