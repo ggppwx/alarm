@@ -110,7 +110,7 @@ def test():
     job._speak('11')
 
 def testOrg():
-    job = Job('/Users/jingweigu/Dropbox/org/scratch.org')
+    job = Job('/home/roygu/Dropbox/org/scratch.org')
     job._read_todays_org()
 
 if __name__ == "__main__":
