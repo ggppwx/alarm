@@ -130,6 +130,6 @@ def testOrg():
     job._read_todays_org()
 
 if __name__ == "__main__":
-    #main()
-    testOrg()
+    main()
+    # testOrg()
 
