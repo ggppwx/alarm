@@ -18,6 +18,7 @@ class Org(object):
 
 
     def getTasks(self, date):
+        '''get tasks and their info '''
         tasks = []
         for f in self._files:
             nodelist = Orgnode.makelist(f)
@@ -26,8 +27,15 @@ class Org(object):
                     and n.Scheduled() and str(n.Scheduled()) <= str(date)):
                     print n.Scheduled()
                     print n.Heading()
-                    tasks.append(n.Heading())
+                    tasks.append({
+                        'heading' : n.Heading(),
+                        'deadline' : n.Deadline(),
+                        'schedule' : n.Scheduled()
+                    })
         return tasks
+
+
+
 
 
 class Job(object):
@@ -51,10 +59,18 @@ class Job(object):
         if len(tasks) == 0:
             self._speak('No task today')
         else:
-            self._speak('Todays task has: ')
+            self._speak('Todays tasks have: ')
             for task in tasks:
-                self._speak(task)
+                self._speak(task['heading'])
                 time.sleep(1.5)
+
+            overdue_tasks = [task for task in tasks if task['schedule'] < today]
+            if len(overdue_tasks) > 0:
+                for i in range(0, 5):
+                    self._speak('Overdue tasks have')
+                    for task in overdue_tasks:
+                        self._speak(task['heading'])
+                        time.sleep(1.5)
 
 
     def run(self, text, sound, org):
@@ -110,10 +126,10 @@ def test():
     job._speak('11')
 
 def testOrg():
-    job = Job('/home/roygu/Dropbox/org/scratch.org')
+    job = Job('/Users/jingweigu/Dropbox/org/scratch.org')
     job._read_todays_org()
 
 if __name__ == "__main__":
-    main()
-    #testOrg()
+    #main()
+    testOrg()
 
